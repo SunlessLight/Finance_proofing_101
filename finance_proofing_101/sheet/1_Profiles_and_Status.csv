@@ -1,0 +1,14 @@
+Team,Profile,Start Cash
+Team 1,Hustler,2000
+Team 2,Med/Law Student,2000
+Team 3,Scholarship Kid,2000
+Team 4,Shopaholic,2000
+Team 5,Wealthy Kid,2000
+Team 6,Influencer,2000
+
+# HOW TO USE - Profiles & Status (SEED ONLY)
+"# This tab is now just the SEED: it names the 6 teams, their profile, and the uniform $2,000 Start Cash. Set once at the start; you do not edit it during play."
+"# Rows 2-7 (one per team) are read by every Financial Statement via VLOOKUP on column C (Start Cash) - do NOT insert, delete, or reorder them, and keep Start Cash in column C."
+"# ALL line-item detail now lives in the Statement Items tab (6_Statement_Items.csv): each profile's income, living/lifestyle expenses, net-worth assets, and debts. That is the single source of truth - this tab no longer carries Monthly Income / Expenses / Passive Income / Liability Balance columns."
+"# To change a profile's starting make-up, edit its rows in Statement Items, not here."
+"# All figures follow the Rule of Zeroes (multiples of $50 / $100)."

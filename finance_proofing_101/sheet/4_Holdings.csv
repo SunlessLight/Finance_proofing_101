@@ -1,0 +1,17 @@
+Team,S&P 500,99 Speedmart,Tenaga,Maybank,Maxis,Nvidia,Moderna,Tesla,Dogecoin,Term Deposit ($),Total Value,Monthly Dividend
+Team 1,0,0,0,0,0,0,0,0,0,0,,"=MMULT(B2:J2,'Market Prices'!$P$2:$P$10)"
+Team 2,0,0,0,0,0,0,0,0,0,0,,"=MMULT(B3:J3,'Market Prices'!$P$2:$P$10)"
+Team 3,0,0,0,0,0,0,0,0,0,0,,"=MMULT(B4:J4,'Market Prices'!$P$2:$P$10)"
+Team 4,0,0,0,0,0,0,0,0,0,0,,"=MMULT(B5:J5,'Market Prices'!$P$2:$P$10)"
+Team 5,0,0,0,0,0,0,0,0,0,0,,"=MMULT(B6:J6,'Market Prices'!$P$2:$P$10)"
+Team 6,0,0,0,0,0,0,0,0,0,0,,"=MMULT(B7:J7,'Market Prices'!$P$2:$P$10)"
+
+# HOW TO USE - Holdings
+"# Each row 2-7 is a team. Columns B-J hold the number of SHARES the team owns of each instrument; edit these only on a trade."
+"# Term Deposit ($) column = cash locked in a bond token (lock $1000 -> redeem $1200, or $2000 -> $2400, after 2 trading windows). Enter the locked dollar amount."
+"# Total Value (col L) is a FORMULA - it auto-values shares x current price (from Market Prices) + the term-deposit cash. Do not type into col L; paste the formula per README section B."
+"# Monthly Dividend (col M) is a FORMULA = MMULT(this team's shares B:J, Market Prices Div/share P2:P10) = sum of shares x $5 for the 4 stable stocks (others pay $0). Auto-recomputes when share counts change. Each team's Financial Statement adds THIS cell to Total Income AND Passive Income, so dividends raise the payday and count toward escaping. Do not type into col M."
+"# Example BUY: Team 1 buys 4 S&P 500 shares -> set Team 1's S&P 500 cell to 4, and log a Trade row of -400 in the Transaction Log (4 x $100)."
+"# Example SELL: Team 1 sells those 4 S&P 500 at $150 -> set the S&P 500 cell back to 0, and log a Trade row of +600."
+"# Keep the 9 instrument headers (row 1, cols B-J) spelled and ordered EXACTLY as in Market Prices col A - the dividend MMULT and the price VLOOKUP match by position/name."
+"# Do NOT insert / delete / reorder rows 2-7; the Balance Dashboard VLOOKUPs each team's Total Value by name."

@@ -1,0 +1,18 @@
+Instrument,Current Price,R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11,R12,R13,Div/share,Current Round →,1
+S&P 500,"=INDEX($C2:$O2,1,$R$1)",100,110,110,120,120,130,130,140,150,160,180,200,230,0,,
+99 Speedmart,"=INDEX($C3:$O3,1,$R$1)",110,110,90,100,110,120,120,130,120,100,110,120,130,5,,
+Tenaga,"=INDEX($C4:$O4,1,$R$1)",110,90,100,110,110,130,130,120,110,160,150,150,160,5,,
+Maybank,"=INDEX($C5:$O5,1,$R$1)",150,150,160,160,130,120,120,130,150,150,160,130,140,5,,
+Maxis,"=INDEX($C6:$O6,1,$R$1)",100,100,110,110,100,110,120,140,110,120,120,130,130,5,,
+Nvidia,"=INDEX($C7:$O7,1,$R$1)",150,190,200,220,220,160,120,120,170,170,190,240,260,0,,
+Moderna,"=INDEX($C8:$O8,1,$R$1)",90,100,100,80,90,80,80,90,100,100,150,140,150,0,,
+Tesla,"=INDEX($C9:$O9,1,$R$1)",150,170,200,250,250,170,140,100,130,110,120,140,160,0,,
+Dogecoin,"=INDEX($C10:$O10,1,$R$1)",60,110,180,240,290,100,60,40,50,40,30,30,20,0,,
+
+# HOW TO USE - Market Prices (now auto-updating)
+"# Market <-> ledger link: the Holdings tab values every team's shares by VLOOKUP-ing the Current Price (col B) by name. Col B is now a FORMULA, not typed."
+"# AUTO-UPDATE: the round-driver cell is R1 (the number just right of 'Current Round →', range 1-13). At each round CLOSE, change ONLY R1 to that round number - all 9 Current Prices (B2:B10) jump to that round's closing price via =INDEX($C:$O,1,$R$1), and Holdings revalue automatically. No more typing 9 prices."
+"# Columns C-O are the official closing prices per round (R1..R13), taken straight from dashboard/market-script.json (anchors index 1..13). They are fixed - do not edit during play."
+"# If the Current Price cells show the text '=INDEX(...)' after import, your import didn't convert formulas: retype the '=' in B2 and drag down to B10, or re-import with 'Convert text to numbers/formulas' enabled."
+"# Stock prices move on a $10 grid (Rule of Tens - stocks only). Keep the 9 instrument names in column A spelled EXACTLY as shown (VLOOKUP keys) - do not rename or reorder. The names are real-world examples (S&P 500, Maybank, Tesla, Dogecoin...) so participants learn what kind of asset each is."
+"# DIVIDENDS (col P, Div/share): a FIXED dollar dividend paid per share, every payday. Only the 4 stable stocks pay (99 Speedmart/Tenaga/Maybank/Maxis = $5); the S&P 500, growth stocks, and Dogecoin = $0. It's a flat constant (same all 13 rounds) - the yield floats because price changes, not the $5. Holdings col M reads this column (P2:P10) to auto-compute each team's monthly dividend; see Holdings + Financial Statement setup."

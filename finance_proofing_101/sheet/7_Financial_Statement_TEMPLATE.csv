@@ -1,0 +1,34 @@
+TEAM FINANCIAL STATEMENT,Team 1
+(player view - read only; set the team key in cell B1),
+,
+SUMMARY,(read-only)
+Total Income,"=SUMIFS('Statement Items'!D:D,'Statement Items'!A:A,$B$1,'Statement Items'!B:B,""Income"")+SUMIFS('Statement Items'!D:D,'Statement Items'!A:A,$B$1,'Statement Items'!B:B,""Skill"")+SUMIFS('Statement Items'!D:D,'Statement Items'!A:A,$B$1,'Statement Items'!B:B,""Skill Up"")+SUMIFS('Statement Items'!E:E,'Statement Items'!A:A,$B$1,'Statement Items'!B:B,""Asset"")+SUMIFS('Statement Items'!E:E,'Statement Items'!A:A,$B$1,'Statement Items'!B:B,""Opportunity - Small"")+SUMIFS('Statement Items'!E:E,'Statement Items'!A:A,$B$1,'Statement Items'!B:B,""Opportunity - Big"")"
+Total Expenses,"=SUMIFS('Statement Items'!D:D,'Statement Items'!A:A,$B$1,'Statement Items'!B:B,""Expense"")+SUMIFS('Statement Items'!E:E,'Statement Items'!A:A,$B$1,'Statement Items'!B:B,""Liability"")"
+Monthly Cash Flow (Payday),=B4-B5
+Total Assets,"=VLOOKUP($B$1,'Profiles & Status'!A:C,3,0)+SUMIF('Transaction Log'!B:B,$B$1,'Transaction Log'!E:E)+VLOOKUP($B$1,Holdings!$A:$N,12,FALSE)+SUMIFS('Statement Items'!D:D,'Statement Items'!A:A,$B$1,'Statement Items'!B:B,""Asset"")+SUMIFS('Statement Items'!D:D,'Statement Items'!A:A,$B$1,'Statement Items'!B:B,""Opportunity - Small"")+SUMIFS('Statement Items'!D:D,'Statement Items'!A:A,$B$1,'Statement Items'!B:B,""Opportunity - Big"")"
+Total Liabilities,"=SUMIFS('Statement Items'!D:D,'Statement Items'!A:A,$B$1,'Statement Items'!B:B,""Liability"")"
+Net Equity,=B7-B8
+Passive Income,"=SUMIFS('Statement Items'!E:E,'Statement Items'!A:A,$B$1,'Statement Items'!B:B,""Asset"")+SUMIFS('Statement Items'!E:E,'Statement Items'!A:A,$B$1,'Statement Items'!B:B,""Opportunity - Small"")+SUMIFS('Statement Items'!E:E,'Statement Items'!A:A,$B$1,'Statement Items'!B:B,""Opportunity - Big"")+VLOOKUP($B$1,Holdings!$A:$N,13,FALSE)"
+Escaped Rat Race?,"=IF(B10>=B5,""✅ ESCAPED"",""Not yet"")"
+,
+INCOME (per payday),,,EXPENSES (per payday),,,ASSETS (what you own),,,LIABILITIES (what you owe)
+"=LET(t,$B$1,inc,IFERROR(FILTER(HSTACK('Statement Items'!C2:C,'Statement Items'!D2:D),('Statement Items'!A2:A=t)*(('Statement Items'!B2:B=""Income"")+('Statement Items'!B2:B=""Skill"")+('Statement Items'!B2:B=""Skill Up""))),HSTACK("""","""")),pass,IFERROR(FILTER(HSTACK('Statement Items'!C2:C,'Statement Items'!E2:E),('Statement Items'!A2:A=t)*(('Statement Items'!B2:B=""Asset"")+('Statement Items'!B2:B=""Opportunity - Small"")+('Statement Items'!B2:B=""Opportunity - Big""))),HSTACK("""","""")),all,VSTACK(inc,pass),FILTER(all,(INDEX(all,,1)<>"""")+(INDEX(all,,2)<>"""")))",,,"=LET(t,$B$1,exp,IFERROR(FILTER(HSTACK('Statement Items'!C2:C,'Statement Items'!D2:D),('Statement Items'!A2:A=t)*('Statement Items'!B2:B=""Expense"")),HSTACK("""","""")),liab,IFERROR(FILTER(HSTACK('Statement Items'!C2:C,'Statement Items'!E2:E),('Statement Items'!A2:A=t)*('Statement Items'!B2:B=""Liability"")),HSTACK("""","""")),all,VSTACK(exp,liab),FILTER(all,(INDEX(all,,1)<>"""")+(INDEX(all,,2)<>"""")))",,,"=LET(t,$B$1,cash,VLOOKUP(t,'Profiles & Status'!A:C,3,0)+SUMIF('Transaction Log'!B:B,t,'Transaction Log'!E:E),other,IFERROR(FILTER(HSTACK('Statement Items'!C2:C,'Statement Items'!D2:D),('Statement Items'!A2:A=t)*(('Statement Items'!B2:B=""Asset"")+('Statement Items'!B2:B=""Opportunity - Small"")+('Statement Items'!B2:B=""Opportunity - Big""))),HSTACK("""","""")),all,VSTACK(HSTACK(""Cash"",cash),stockrows,other),FILTER(all,(INDEX(all,,1)<>"""")+(INDEX(all,,2)<>"""")))",,,"=IFERROR(FILTER(HSTACK('Statement Items'!C2:C,'Statement Items'!D2:D),('Statement Items'!A2:A=$B$1)*('Statement Items'!B2:B=""Liability"")),HSTACK("""",""""))"
+
+# HOW TO USE - Financial Statement (one tab PER TEAM)
+"# This is the clean player-facing sheet (Cashflow-101 style). It is 100% FORMULA-DRIVEN and READ-ONLY - players just look at it."
+"# BUILD ONCE, THEN DUPLICATE: import this template, paste the formulas (rows 5-12 into B4:B11, the row-14 spill formulas into A14/D14/G14/J14), then duplicate the tab 5x."
+"#   The ONLY thing that changes per tab is cell B1 (the team key): Team 1, Team 2, ... Team 6. Every formula references $B$1."
+"# Rename the 6 tabs to: Statement - Team 1 ... Statement - Team 6."
+"# LAYOUT:"
+"#   B1 = team key (give it a data-validation dropdown of the 6 team names)."
+"#   A4:B11 = SUMMARY box (totals, cash flow, net equity, passive income, rat-race flag) - computed straight from the source tabs, so it stays stable."
+"#   Row 13 = the four section headers. Row 14 = one spilling FILTER/VSTACK formula per section, each in its own column zone (A:B income, D:E expenses, G:H assets, J:K liabilities) so the lists never collide as they grow/shrink."
+"# SECTION VOCABULARY (col B of Statement Items): Income | Skill | Skill Up | Expense | Asset | Opportunity - Small | Opportunity - Big | Liability."
+"#   ASSET-TYPE GROUP (value + passive income) = Asset + Opportunity - Small + Opportunity - Big. These surface under ASSETS (their Amount) and INCOME (their Cashflow), and COUNT toward Passive Income / escaping."
+"#   INCOME-TYPE GROUP (active income only) = Income + Skill + Skill Up. These surface under INCOME (their Amount) but do NOT count toward Passive Income."
+"# STOCKS: the ASSETS list (G14) folds in a 'stockrows' block - define 'stockrows' as a NAMED RANGE/cell holding the per-instrument stock FILTER below. Stock value also flows into Total Assets via Holdings col L (Total Value); stock DIVIDENDS flow into Passive Income (and optionally Total Income) via Holdings col M (=...,13,...)."
+"#     stockrows = =IFERROR(FILTER(HSTACK('Market Prices'!A4:A12,TRANSPOSE(FILTER(Holdings!B3:J13,Holdings!A3:A13=$B$1))*'Market Prices'!B4:B12),TRANSPOSE(FILTER(Holdings!B3:J13,Holdings!A3:A13=$B$1))*'Market Prices'!B4:B12>0),HSTACK("""",""""))"
+"# DIVIDENDS: Passive Income (B10) already adds VLOOKUP($B$1,Holdings!$A:$N,13,FALSE). If you also want dividends to lift the payday, append the same VLOOKUP to Total Income (B4)."
+"# TERM DEPOSIT was removed from play - the old Term Deposit rows in the ASSETS LET are gone, and the cash sum points at the Transaction Log Amount column ('Transaction Log'!E:E)."
+"# Do NOT type into the spill area or the summary box - edit the DATA tabs (Statement Items, Holdings, Transaction Log, Market Prices) and this updates itself."
+"# Protect the 6 statement tabs (View-only for players) so nobody overwrites a formula."

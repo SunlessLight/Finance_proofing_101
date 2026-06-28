@@ -1,0 +1,71 @@
+Deck,Sub-deck,Index,Card,Effect,Cost,Passive/payday
+Life Happens,Hustler,1,Client ghosted you — a gig falls through.,Lose $500 this payday.,,
+Life Happens,Hustler,2,Burnout from juggling gigs.,Pay $300 to recover.,,
+Life Happens,Hustler,3,Side-gig goes viral.,Collect $1000.,,
+Life Happens,Hustler,4,A repeat client signs a retainer.,Collect $500.,,
+Life Happens,Hustler,5,Free freelance masterclass (skill-up).,Gain +$100/payday permanently (add as an Income row).,,
+Life Happens,Med/Law Student,1,Exam fees + textbooks.,Pay $500.,,
+Life Happens,Med/Law Student,2,Stress-related health issue.,Pay $300.,,
+Life Happens,Med/Law Student,3,Top of the class — research stipend.,Collect $500.,,
+Life Happens,Med/Law Student,4,Paid teaching-assistant shift.,Collect $300.,,
+Life Happens,Med/Law Student,5,Free clinical-skills workshop (skill-up).,Gain +$100/payday permanently (add as an Income row).,,
+Life Happens,Scholarship Kid,1,Family needs help back home.,Pay $300.,,
+Life Happens,Scholarship Kid,2,Laptop repair before finals.,Pay $200.,,
+Life Happens,Scholarship Kid,3,Scholarship excellence bonus.,Collect $500.,,
+Life Happens,Scholarship Kid,4,Won a case-competition prize.,Collect $300.,,
+Life Happens,Scholarship Kid,5,Free online certification — scholarship perk (skill-up).,Gain +$100/payday permanently (add as an Income row).,,
+Life Happens,Shopaholic,1,BNPL bill comes due.,Pay $400.,,
+Life Happens,Shopaholic,2,"""Limited drop"" — you must buy it.",Pay $300.,,
+Life Happens,Shopaholic,3,Returned an impulse buy.,Collect $200.,,
+Life Happens,Shopaholic,4,Sold old clothes online.,Collect $300.,,
+Life Happens,Shopaholic,5,Free personal-finance bootcamp (skill-up).,Gain +$100/payday permanently (add as an Income row).,,
+Life Happens,Wealthy Kid,1,Friends' overseas trip — FOMO, you go.,Pay $1000.,,
+Life Happens,Wealthy Kid,2,You treat the whole group.,Pay $300.,,
+Life Happens,Wealthy Kid,3,Allowance bonus from parents.,Collect $500.,,
+Life Happens,Wealthy Kid,4,Sold a designer item.,Collect $300.,,
+Life Happens,Wealthy Kid,5,Family pays for an executive course (skill-up).,Gain +$100/payday permanently (add as an Income row).,,
+Life Happens,Influencer,1,A post flops + algorithm change.,Lose $500 income this payday.,,
+Life Happens,Influencer,2,Gear upgrade to stay relevant.,Pay $500.,,
+Life Happens,Influencer,3,Brand deal! A sponsor pays big.,Collect $1000.,,
+Life Happens,Influencer,4,Follower-milestone bonus.,Collect $300.,,
+Life Happens,Influencer,5,Free content-creator workshop (skill-up).,Gain +$100/payday permanently (add as an Income row).,,
+Campus Life (Community Chest),,1,Won a hackathon.,Collect $500.,,
+Campus Life (Community Chest),,2,Group project — you covered materials.,Pay $200.,,
+Campus Life (Community Chest),,3,Landed a tutoring gig.,Collect $300.,,
+Campus Life (Community Chest),,4,Cracked phone screen.,Pay $200.,,
+Campus Life (Community Chest),,5,Birthday money from relatives.,Collect $300.,,
+Campus Life (Community Chest),,6,Society membership fees.,Pay $100.,,
+Campus Life (Community Chest),,7,Helped a junior → referral bonus.,Collect $200.,,
+Campus Life (Community Chest),,8,Caught a cold during finals.,Pay $100.,,
+Campus Life (Community Chest),,9,Won a scholarship raffle.,Collect $400.,,
+Campus Life (Community Chest),,10,Treated friends to a meal.,Pay $150.,,
+Temptation (Doodad),,1,Midnight bubble-tea run for the squad.,Pay $50.,,
+Temptation (Doodad),,2,Concert tickets just dropped.,Pay $300.,,
+Temptation (Doodad),,3,A sale you can't resist.,Pay $200.,,
+Temptation (Doodad),,4,New phone case + accessories.,Pay $100.,,
+Temptation (Doodad),,5,Food-delivery binge week.,Pay $150.,,
+Temptation (Doodad),,6,Impulse subscription.,Pay $50 now and $50 again next payday.,,
+Opportunity — Small Deal,,1,Resell sneakers online,Buy → passive income each payday (illiquid; forced resell at half price),$500,$150
+Opportunity — Small Deal,,2,Used-textbook flipping,Buy → passive income each payday (illiquid; forced resell at half price),$500,$150
+Opportunity — Small Deal,,3,Print-on-demand store,Buy → passive income each payday (illiquid; forced resell at half price),$500,$150
+Opportunity — Small Deal,,4,Vending route add-on,Buy → passive income each payday (illiquid; forced resell at half price),$1000,$300
+Opportunity — Small Deal,,5,Tutoring service,Buy → passive income each payday (illiquid; forced resell at half price),$500,$150
+Opportunity — Small Deal,,6,Event photography gigs,Buy → passive income each payday (illiquid; forced resell at half price),$1000,$300
+Opportunity — Big Deal,,1,Small e-commerce brand,Buy → passive income each payday (illiquid; forced resell at half price),$3000,$900
+Opportunity — Big Deal,,2,Laundromat share,Buy → passive income each payday (illiquid; forced resell at half price),$4000,$1200
+Opportunity — Big Deal,,3,Co-own a campus cafe,Buy → passive income each payday (illiquid; forced resell at half price),$4000,$1200
+Opportunity — Big Deal,,4,Rental room near campus,Buy → passive income each payday (illiquid; forced resell at half price),$5000,$1500
+Opportunity — Big Deal,,5,Food-truck share,Buy → passive income each payday (illiquid; forced resell at half price),$3000,$900
+Opportunity — Big Deal,,6,Co-working desk rental,Buy → passive income each payday (illiquid; forced resell at half price),$5000,$1500
+Market News — Buyer Offer,,1,An investor wants to buy your sneaker-resale business.,"Owner of ""Resell sneakers online"" may sell it for $800 (else sell this card to the owner).",$800,
+Market News — Buyer Offer,,2,A bookstore wants your textbook-flipping operation.,"Owner of ""Used-textbook flipping"" may sell it for $800 (else sell this card to the owner).",$800,
+Market News — Buyer Offer,,3,A brand wants to acquire your print-on-demand store.,"Owner of ""Print-on-demand store"" may sell it for $800 (else sell this card to the owner).",$800,
+Market News — Buyer Offer,,4,A vendor wants to buy out your vending route.,"Owner of ""Vending route add-on"" may sell it for $1500 (else sell this card to the owner).",$1500,
+Market News — Buyer Offer,,5,A learning center wants your tutoring service.,"Owner of ""Tutoring service"" may sell it for $800 (else sell this card to the owner).",$800,
+Market News — Buyer Offer,,6,An agency wants your event-photography gigs.,"Owner of ""Event photography gigs"" may sell it for $1500 (else sell this card to the owner).",$1500,
+Market News — Buyer Offer,,7,A retailer wants to acquire your e-commerce brand.,"Owner of ""Small e-commerce brand"" may sell it for $4500 (else sell this card to the owner).",$4500,
+Market News — Buyer Offer,,8,An operator wants to buy your laundromat share.,"Owner of ""Laundromat share"" may sell it for $6000 (else sell this card to the owner).",$6000,
+Market News — Buyer Offer,,9,A chain wants to buy out your campus cafe.,"Owner of ""Co-own a campus cafe"" may sell it for $6000 (else sell this card to the owner).",$6000,
+Market News — Buyer Offer,,10,A landlord wants to buy your rental room.,"Owner of ""Rental room near campus"" may sell it for $7500 (else sell this card to the owner).",$7500,
+Market News — Buyer Offer,,11,A franchise wants your food-truck share.,"Owner of ""Food-truck share"" may sell it for $4500 (else sell this card to the owner).",$4500,
+Market News — Buyer Offer,,12,A property firm wants your co-working desks.,"Owner of ""Co-working desk rental"" may sell it for $7500 (else sell this card to the owner).",$7500,

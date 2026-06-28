@@ -1,0 +1,79 @@
+Team,Section,Item,Amount,Cashflow,Rate,Note
+Team 1,Income,Part-time cafe wage,500,,,
+Team 1,Income,Freelance design gigs,1500,,,
+Team 1,Income,Online reselling,1000,,,
+Team 1,Expense,Shared-flat rent,900,,,
+Team 1,Expense,Groceries,400,,,
+Team 1,Expense,Transport,200,,,
+Team 1,Expense,Design software subs,150,,,
+Team 1,Expense,Eating out,150,,,
+Team 1,Asset,Laptop & camera gear,1500,0,,net worth
+Team 1,Asset,Cash savings,500,0,,net worth
+Team 1,Liability,Gear loan,2000,=D12*F12,0.1,$2000 @ 10%
+Team 2,Income,Hospital clerkship stipend,3500,,,
+Team 2,Expense,Rent near campus,1400,,,
+Team 2,Expense,Groceries,300,,,
+Team 2,Expense,Commute,200,,,
+Team 2,Expense,Streaming,100,,,
+Team 2,Expense,Gym,100,,,
+Team 2,Asset,Medical equipment & textbooks,1000,0,,net worth
+Team 2,Asset,Savings,500,0,,net worth
+Team 2,Liability,Student loan,16000,=D21*F21,0.025,$16000 @ 2.5%
+Team 3,Income,Scholarship living stipend,1800,,,
+Team 3,Expense,Dorm rent,400,,,
+Team 3,Expense,Food,300,,,
+Team 3,Expense,Phone/data plan,50,,,
+Team 3,Expense,Streaming,50,,,
+Team 3,Asset,Emergency savings,1500,0,,net worth
+Team 3,Asset,Laptop,500,0,,net worth
+Team 4,Income,Junior executive salary,3000,,,
+Team 4,Expense,Rent,600,,,
+Team 4,Expense,Groceries,400,,,
+Team 4,Expense,Fashion & shopping,400,,,
+Team 4,Expense,Subscriptions,200,,,
+Team 4,Asset,Wardrobe & designer items,1500,0,,net worth (depreciates)
+Team 4,Asset,Gadgets,500,0,,net worth (depreciates)
+Team 4,Liability,Credit card,3000,=D36*F36,0.1,$3000 @ 10%
+Team 4,Liability,BNPL,1000,=D37*F37,0.1,$1000 @ 10%
+Team 5,Income,Monthly family allowance,4000,,,
+Team 5,Expense,Premium apartment,1500,,,
+Team 5,Expense,Dining & groceries,500,,,
+Team 5,Expense,Designer shopping,600,,,
+Team 5,Expense,Clubbing & dining out,400,,,
+Team 5,Asset,Designer watch & goods,2000,0,,net worth
+Team 6,Income,Brand-deal / sponsorship income,3000,,,
+Team 6,Income,Merch & affiliate sales,500,,,
+Team 6,Expense,Rent,800,,,
+Team 6,Expense,Food,400,,,
+Team 6,Expense,Appearance & fashion,500,,,
+Team 6,Expense,Editing software & subs,300,,,
+Team 6,Asset,Camera & studio gear,3000,0,,net worth
+Team 6,Asset,Designer wardrobe,1000,0,,net worth
+Team 6,Liability,Camera/gear loan,4000,=D52*F52,0.1,$4000 @ 10%
+Team 6,Liability,Phone installment,1000,=D53*F53,0.1,$1000 @ 10%
+
+# HOW TO USE - Statement Items
+"# This tab is the LIVE source for every team's Financial Statement (tabs 7+). Each row is ONE line item."
+"# Columns: Team | Section | Item | Amount | Cashflow | Rate | Note."
+"# Section vocabulary (exactly): Income | Skill | Skill Up | Expense | Asset | Opportunity - Small | Opportunity - Big | Liability. The statement FILTERs by Team + Section, showing only the rows that belong to that team."
+"# TWO GROUPS behave alike: ASSET-TYPE = Asset + Opportunity - Small + Opportunity - Big (value under Assets, Cashflow under Income, COUNTS toward Passive Income/escaping). INCOME-TYPE = Income + Skill + Skill Up (Amount under Income; active income only, does NOT count toward Passive Income)."
+"# Amount = the figure shown IN that section: Income/payday, Expense/payday, Asset value, Liability balance."
+"# Cashflow = the LINKED opposite-section figure:"
+"#   Asset / Opportunity - Small / Opportunity - Big row -> passive income/payday it pays (0 for net-worth assets like a laptop). It surfaces in the INCOME section and counts toward escaping the rat race."
+"#   Liability row -> monthly payment/payday. It surfaces in the EXPENSES section. THIS IS A FORMULA = Amount x Rate (see below)."
+"#   Income / Expense rows -> leave Cashflow blank."
+"# Rate = the debt's monthly rate, used ONLY on Liability rows: 0.1 for 10% consumer debt (gear, credit card, BNPL, phone, forced personal loans), 0.025 for the 2.5% student loan."
+"# AUTO DEBT PAYMENT: each Liability row's Cashflow cell is the formula =Amount*Rate (e.g. row 12: =D12*F12). So you only ever edit the BALANCE (Amount) - the monthly payment and the Expenses line recalculate themselves."
+"#   If after import a Cashflow cell shows the text '=D12*F12' instead of a number, your import didn't convert formulas: just retype the '=' or re-import with 'Convert text to numbers/formulas' enabled."
+"#   Keep balances on the $500 (10%) / $2000 (2.5%) grid so the auto payment lands on clean $50 steps."
+"# SKILLS are INCOME-TYPE rows (Amount = the income bump; leave Cashflow blank). Use Section 'Skill' for a BOARD Skill-Up space (Online Course +150, Professional Certification +300, Coding Bootcamp +450, Marketing Course +600) and Section 'Skill Up' for a LIFE-HAPPENS skill card (+100). Both grow the payday but do NOT count toward Passive Income / escaping - only Asset / Opportunity rows and stock dividends do."
+"# STOCKS are the exception - they are auto-derived from the Holdings + Market Prices tabs, so do NOT add stock rows here."
+"# DURING PLAY:"
+"#   Buy a board asset -> add an 'Asset' row; buy an Opportunity deal -> add an 'Opportunity - Small' or 'Opportunity - Big' row (Amount = value/cost, Cashflow = its per-payday income) + log the cash row."
+"#   Gain a board Skill-Up -> add a 'Skill' row; gain a Life-Happens skill card -> add a 'Skill Up' row (Amount = the income bump, Cashflow blank) + log the cash row."
+"#   Take on a new liability -> add a Liability row (Amount = balance, Rate = 0.1 or 0.05, Cashflow = =Amount*Rate) + log any cash received."
+"#   A 'balance grows' card (loan/card interest) -> just raise that Liability's Amount; the payment updates itself. NO cash row."
+"#   Repay debt -> just lower that Liability's Amount (balance) by the amount repaid; the payment updates itself + log the cash row."
+"#   Sell an asset -> delete its row (or set Amount to 0) + log the cash row."
+"# Do not insert/rename columns A-E - the statement formulas key off those positions (Item=C, Amount=D, Cashflow=E). Rate=F and Note=G are free for you to use."
+"# Rule of Zeroes: keep all figures multiples of $50 / $100."

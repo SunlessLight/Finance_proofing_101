@@ -1,0 +1,712 @@
+{
+  "_comment": "Source-of-truth market script. The dashboard (index.html) embeds an identical copy so it runs offline by double-click. Edit BOTH if you change values. Anchors length = rounds+1 = 14 (R1 open ... R13 close). Closing anchors are the official trade prices (all multiples of $10 — the stocks-only 'Rule of Tens'; the rest of the game economy stays on $50/$100). Intra-round ticks are visual jitter only; the round always closes exactly on its anchor. divPerShare = fixed dollar dividend paid per share each payday ($5 for the 4 stable stocks, 0 otherwise); the dashboard shows the live yield (divPerShare / price), which floats as price moves. Keep divPerShare in sync with the sheet's Market Prices 'Div/share' column. desc/tags feed the Stock Info modal only. NEWS ENGINE: one object per round (1-based). 'upcoming' shows in the Trading Window BEFORE that round (one stock hinted to rise, one to fall); 'events' fire DURING that round at the given tick (riser early, faller later) — up[]/down[] are the cards that blink green/maroon, flash pulses the news border red. Design: A&L 500 climbs monotonically ~100->230; Mooncoin pumps to ~290 then crashes to ~20; every round has one clear riser and one clear faller matched to its news.",
+  "rounds": 13,
+  "ticksPerRound": 60,
+  "tickMs": 4000,
+  "instruments": [
+    {
+      "id": "INDEX",
+      "name": "A&L 500",
+      "type": "index",
+      "vol": 10,
+      "divPerShare": 0,
+      "desc": "A basket of the 500 biggest US companies — buying it means you own 'the whole market' in one click.",
+      "tags": [
+        "Index Fund",
+        "Diversified",
+        "Slow & Steady"
+      ],
+      "anchors": [
+        100,
+        100,
+        110,
+        110,
+        120,
+        120,
+        130,
+        130,
+        140,
+        150,
+        160,
+        180,
+        200,
+        230
+      ]
+    },
+    {
+      "id": "MEGAMART",
+      "name": "99 Megamart",
+      "type": "stable",
+      "vol": 10,
+      "divPerShare": 5,
+      "desc": "An everyday retail chain. People shop in good times and bad, so it stays steady and pays a dividend.",
+      "tags": [
+        "Stable",
+        "Dividend",
+        "Defensive"
+      ],
+      "anchors": [
+        100,
+        110,
+        110,
+        90,
+        100,
+        110,
+        120,
+        120,
+        130,
+        120,
+        100,
+        110,
+        120,
+        130
+      ]
+    },
+    {
+      "id": "POWERGRID",
+      "name": "TenGrid",
+      "type": "stable",
+      "vol": 10,
+      "divPerShare": 5,
+      "desc": "The national power utility — boring but essential. It pays you a dividend just for holding it.",
+      "tags": [
+        "Stable",
+        "Dividend",
+        "Utility"
+      ],
+      "anchors": [
+        110,
+        110,
+        90,
+        100,
+        110,
+        110,
+        130,
+        130,
+        120,
+        110,
+        160,
+        150,
+        150,
+        160
+      ]
+    },
+    {
+      "id": "SAFEBANK",
+      "name": "Safebank",
+      "type": "stable",
+      "vol": 10,
+      "divPerShare": 5,
+      "desc": "A big bank. It earns more when interest rates rise and people borrow more — and pays a dividend.",
+      "tags": [
+        "Stable",
+        "Dividend",
+        "Bank"
+      ],
+      "anchors": [
+        140,
+        150,
+        150,
+        160,
+        160,
+        130,
+        120,
+        120,
+        130,
+        150,
+        150,
+        160,
+        130,
+        140
+      ]
+    },
+    {
+      "id": "TELECOM",
+      "name": "Telecom",
+      "type": "stable",
+      "vol": 10,
+      "divPerShare": 5,
+      "desc": "A telco living off monthly phone and data subscriptions — steady cashflow and a dividend.",
+      "tags": [
+        "Stable",
+        "Dividend",
+        "Defensive"
+      ],
+      "anchors": [
+        90,
+        100,
+        100,
+        110,
+        110,
+        100,
+        110,
+        120,
+        140,
+        110,
+        120,
+        120,
+        130,
+        130
+      ]
+    },
+    {
+      "id": "NOVATECH",
+      "name": "Nivatech",
+      "type": "growth",
+      "vol": 20,
+      "divPerShare": 0,
+      "desc": "A chipmaker riding the AI boom. Huge upside when hype is on, but the swings are violent.",
+      "tags": [
+        "Growth",
+        "Tech",
+        "High Volatility"
+      ],
+      "anchors": [
+        130,
+        150,
+        190,
+        200,
+        220,
+        220,
+        160,
+        120,
+        120,
+        170,
+        170,
+        190,
+        240,
+        260
+      ]
+    },
+    {
+      "id": "BIOCURE",
+      "name": "BioTech",
+      "type": "growth",
+      "vol": 20,
+      "divPerShare": 0,
+      "desc": "A biotech. It jumps on trial wins and FDA approvals, and drops just as fast when news disappoints.",
+      "tags": [
+        "Growth",
+        "Biotech",
+        "Binary News"
+      ],
+      "anchors": [
+        100,
+        90,
+        100,
+        100,
+        80,
+        90,
+        80,
+        80,
+        90,
+        100,
+        100,
+        150,
+        140,
+        150
+      ]
+    },
+    {
+      "id": "DRIVEX",
+      "name": "DriveX",
+      "type": "growth",
+      "vol": 20,
+      "divPerShare": 0,
+      "desc": "An electric-vehicle maker driven by hype. Sharp run-ups on new models, sharp falls when demand cools.",
+      "tags": [
+        "Growth",
+        "EV",
+        "High Volatility"
+      ],
+      "anchors": [
+        140,
+        150,
+        170,
+        200,
+        250,
+        250,
+        170,
+        140,
+        100,
+        130,
+        110,
+        120,
+        140,
+        160
+      ]
+    },
+    {
+      "id": "MOONCHAIN",
+      "name": "Mooncoin",
+      "type": "meme",
+      "vol": 30,
+      "divPerShare": 0,
+      "desc": "A meme cryptocurrency that runs on pure Fear Of Missing Out (FOMO). It can pump to the moon — then crash to almost nothing.",
+      "tags": [
+        "Meme",
+        "Crypto",
+        "Extreme Risk"
+      ],
+      "anchors": [
+        40,
+        60,
+        110,
+        180,
+        240,
+        290,
+        100,
+        60,
+        40,
+        50,
+        40,
+        30,
+        30,
+        20
+      ]
+    }
+  ],
+  "news": [
+    {
+      "round": 1,
+      "upcoming": {
+        "up": {
+          "stock": "NOVATECH",
+          "text": "Nivatech is about to release a powerful new computer chip."
+        },
+        "down": {
+          "stock": "BIOCURE",
+          "text": "The pandemic is ending, so fewer people need BioTech's vaccine."
+        }
+      },
+      "events": [
+        {
+          "tick": 10,
+          "flash": true,
+          "text": "Nivatech unveils a new AI chip — tech investors start piling in.",
+          "up": [
+            "NOVATECH"
+          ],
+          "down": []
+        },
+        {
+          "tick": 38,
+          "flash": true,
+          "text": "The pandemic fades — BioTech's vaccine demand cools.",
+          "up": [],
+          "down": [
+            "BIOCURE"
+          ]
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "upcoming": {
+        "up": {
+          "stock": "NOVATECH",
+          "text": "Nivatech will soon report how much money it made — many expect a lot."
+        },
+        "down": {
+          "stock": "POWERGRID",
+          "text": "People are losing interest in slow, boring companies like TenGrid."
+        }
+      },
+      "events": [
+        {
+          "tick": 10,
+          "flash": true,
+          "text": "Nivatech posts record earnings — the AI rally goes into overdrive.",
+          "up": [
+            "NOVATECH"
+          ],
+          "down": []
+        },
+        {
+          "tick": 38,
+          "flash": true,
+          "text": "Money flees utilities for tech — TenGrid drifts lower.",
+          "up": [],
+          "down": [
+            "POWERGRID"
+          ]
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "upcoming": {
+        "up": {
+          "stock": "MOONCHAIN",
+          "text": "Everyone online is talking about Mooncoin right now."
+        },
+        "down": {
+          "stock": "MEGAMART",
+          "text": "People are selling shops like 99 Megamart to put money into crypto instead."
+        }
+      },
+      "events": [
+        {
+          "tick": 10,
+          "flash": true,
+          "text": "Mooncoin mania: up 5x as FOMO grips the crowd.",
+          "up": [
+            "MOONCHAIN"
+          ],
+          "down": []
+        },
+        {
+          "tick": 38,
+          "flash": true,
+          "text": "Boring is out — 99 Megamart is sold off to fund crypto bets.",
+          "up": [],
+          "down": [
+            "MEGAMART"
+          ]
+        }
+      ]
+    },
+    {
+      "round": 4,
+      "upcoming": {
+        "up": {
+          "stock": "DRIVEX",
+          "text": "DriveX is about to reveal a brand-new car model."
+        },
+        "down": {
+          "stock": "BIOCURE",
+          "text": "Everyone is chasing exciting stocks, so quiet ones like BioTech are being ignored."
+        }
+      },
+      "events": [
+        {
+          "tick": 10,
+          "flash": true,
+          "text": "DriveX unveils its next-gen EV — the stock goes vertical.",
+          "up": [
+            "DRIVEX"
+          ],
+          "down": []
+        },
+        {
+          "tick": 38,
+          "flash": true,
+          "text": "Risk-on mania: investors abandon BioTech for hotter bets.",
+          "up": [],
+          "down": [
+            "BIOCURE"
+          ]
+        }
+      ]
+    },
+    {
+      "round": 5,
+      "upcoming": {
+        "up": {
+          "stock": "MOONCHAIN",
+          "text": "Mooncoin is close to its highest price ever, and buyers keep coming."
+        },
+        "down": {
+          "stock": "SAFEBANK",
+          "text": "The government is investigating banks that work with crypto, like Safebank."
+        }
+      },
+      "events": [
+        {
+          "tick": 10,
+          "flash": true,
+          "text": "Euphoria peaks — Mooncoin blows off to a brand-new all-time high.",
+          "up": [
+            "MOONCHAIN"
+          ],
+          "down": []
+        },
+        {
+          "tick": 38,
+          "flash": true,
+          "text": "First cracks: a regulatory probe rattles Safebank.",
+          "up": [],
+          "down": [
+            "SAFEBANK"
+          ]
+        }
+      ]
+    },
+    {
+      "round": 6,
+      "upcoming": {
+        "up": {
+          "stock": "POWERGRID",
+          "text": "People are getting scared and looking for safe places to put money, like TenGrid."
+        },
+        "down": {
+          "stock": "MOONCHAIN",
+          "text": "Experts are warning that Mooncoin's price has gone up too far, too fast."
+        }
+      },
+      "events": [
+        {
+          "tick": 10,
+          "flash": true,
+          "text": "Flight to safety — money rushes into TenGrid and the A&L 500.",
+          "up": [
+            "POWERGRID",
+            "INDEX"
+          ],
+          "down": []
+        },
+        {
+          "tick": 38,
+          "flash": true,
+          "text": "CRASH — the crypto bubble bursts; Mooncoin collapses overnight.",
+          "up": [],
+          "down": [
+            "MOONCHAIN",
+            "NOVATECH",
+            "DRIVEX"
+          ]
+        }
+      ]
+    },
+    {
+      "round": 7,
+      "upcoming": {
+        "up": {
+          "stock": "TELECOM",
+          "text": "During the panic, people prefer safe companies that pay them regularly, like Telecom."
+        },
+        "down": {
+          "stock": "NOVATECH",
+          "text": "The market is still shaky, and tech companies like Nivatech are back in the news."
+        }
+      },
+      "events": [
+        {
+          "tick": 10,
+          "flash": true,
+          "text": "Investors seek shelter — steady Telecom holds up while others fall.",
+          "up": [
+            "TELECOM"
+          ],
+          "down": []
+        },
+        {
+          "tick": 38,
+          "flash": true,
+          "text": "Contagion hits tech — Nivatech tumbles in the second leg down.",
+          "up": [],
+          "down": [
+            "NOVATECH",
+            "DRIVEX"
+          ]
+        }
+      ]
+    },
+    {
+      "round": 8,
+      "upcoming": {
+        "up": {
+          "stock": "TELECOM",
+          "text": "Telecom is cheap now but still pays $5 to everyone who holds it."
+        },
+        "down": {
+          "stock": "DRIVEX",
+          "text": "Fewer people are buying electric cars from DriveX."
+        }
+      },
+      "events": [
+        {
+          "tick": 10,
+          "flash": true,
+          "text": "Dividends shine: bargain hunters scoop up Telecom for its steady payout.",
+          "up": [
+            "TELECOM",
+            "MEGAMART",
+            "SAFEBANK"
+          ],
+          "down": []
+        },
+        {
+          "tick": 38,
+          "flash": true,
+          "text": "Capitulation: EV demand collapses and DriveX slumps to new lows.",
+          "up": [],
+          "down": [
+            "DRIVEX",
+            "MOONCHAIN"
+          ]
+        }
+      ]
+    },
+    {
+      "round": 9,
+      "upcoming": {
+        "up": {
+          "stock": "NOVATECH",
+          "text": "Now that prices are low, people are starting to buy cheap tech like Nivatech again."
+        },
+        "down": {
+          "stock": "TELECOM",
+          "text": "People feel brave again and are moving money out of safe companies like Telecom."
+        }
+      },
+      "events": [
+        {
+          "tick": 10,
+          "flash": true,
+          "text": "Recovery begins — dip-buyers pile into Nivatech and the rebound is on.",
+          "up": [
+            "NOVATECH",
+            "INDEX",
+            "DRIVEX"
+          ],
+          "down": []
+        },
+        {
+          "tick": 38,
+          "flash": true,
+          "text": "Risk-on again: defensive Telecom is sold to chase the rally.",
+          "up": [],
+          "down": [
+            "TELECOM"
+          ]
+        }
+      ]
+    },
+    {
+      "round": 10,
+      "upcoming": {
+        "up": {
+          "stock": "POWERGRID",
+          "text": "Electricity and fuel prices are going up fast. TenGrid sells electricity."
+        },
+        "down": {
+          "stock": "MEGAMART",
+          "text": "Everything is getting more expensive to run, including shops like 99 Megamart."
+        }
+      },
+      "events": [
+        {
+          "tick": 10,
+          "flash": true,
+          "text": "Energy crunch: power prices spike and TenGrid rallies hard.",
+          "up": [
+            "POWERGRID"
+          ],
+          "down": []
+        },
+        {
+          "tick": 38,
+          "flash": true,
+          "text": "Cost inflation bites — 99 Megamart and DriveX slip on higher input costs.",
+          "up": [],
+          "down": [
+            "MEGAMART",
+            "DRIVEX"
+          ]
+        }
+      ]
+    },
+    {
+      "round": 11,
+      "upcoming": {
+        "up": {
+          "stock": "BIOCURE",
+          "text": "BioTech is waiting to hear if the government approves its new medicine."
+        },
+        "down": {
+          "stock": "MOONCHAIN",
+          "text": "Hardly anyone is buying Mooncoin anymore."
+        }
+      },
+      "events": [
+        {
+          "tick": 10,
+          "flash": true,
+          "text": "Breakthrough: BioTech wins FDA approval and the stock jumps.",
+          "up": [
+            "BIOCURE"
+          ],
+          "down": []
+        },
+        {
+          "tick": 38,
+          "flash": true,
+          "text": "No bounce for crypto — Mooncoin grinds lower, near worthless.",
+          "up": [],
+          "down": [
+            "MOONCHAIN"
+          ]
+        }
+      ]
+    },
+    {
+      "round": 12,
+      "upcoming": {
+        "up": {
+          "stock": "NOVATECH",
+          "text": "A new wave of AI excitement is building around Nivatech."
+        },
+        "down": {
+          "stock": "SAFEBANK",
+          "text": "Interest rates are expected to be cut soon. Banks like Safebank earn money from interest."
+        }
+      },
+      "events": [
+        {
+          "tick": 10,
+          "flash": true,
+          "text": "AI boom, round two — Nivatech breaks out to fresh highs.",
+          "up": [
+            "NOVATECH",
+            "DRIVEX"
+          ],
+          "down": []
+        },
+        {
+          "tick": 38,
+          "flash": true,
+          "text": "Rate cuts loom — thinner margins drag Safebank down.",
+          "up": [],
+          "down": [
+            "SAFEBANK"
+          ]
+        }
+      ]
+    },
+    {
+      "round": 13,
+      "upcoming": {
+        "up": {
+          "stock": "INDEX",
+          "text": "The whole market has been climbing steadily, and the A&L 500 owns a bit of everything."
+        },
+        "down": {
+          "stock": "MOONCHAIN",
+          "text": "People have basically forgotten about Mooncoin."
+        }
+      },
+      "events": [
+        {
+          "tick": 10,
+          "flash": true,
+          "text": "The boring A&L 500 leads a broad melt-up to record highs.",
+          "up": [
+            "INDEX",
+            "NOVATECH"
+          ],
+          "down": []
+        },
+        {
+          "tick": 38,
+          "flash": true,
+          "text": "Final tally: the index more than doubled while Mooncoin went to near zero.",
+          "up": [],
+          "down": [
+            "MOONCHAIN"
+          ]
+        }
+      ]
+    }
+  ]
+}

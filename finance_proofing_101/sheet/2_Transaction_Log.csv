@@ -1,0 +1,22 @@
+Round,Team,Type,Description,Amount
+1,Team 1,Payday,Passed START (net + passive),1000
+1,Team 1,Bill,Tuition Due,-500
+1,Team 4,Trade,Bought 4 S&P 500 @100,-400
+1,Team 4,Skill,Online Course (+150/payday),-500
+1,Team 2,Tax,Income Tax,-200
+1,Team 3,Card,Campus Life - won hackathon,500
+1,Team 5,Deal,Bought Laundromat share (+350/payday),-4000
+1,Team 6,AssetBuy,Bought Online Shop (+100/payday),-1000
+1,Team 2,Other,Term deposit lock $1000,-1000
+
+# HOW TO USE - Transaction Log
+"# Log EVERY cash movement as one row. Each team's statement Cash line = its Start Cash + the sum of these rows (SUMIF on column B)."
+"# Amount is SIGNED: income / collect = positive (e.g. 500); spending / pay = negative (e.g. -200)."
+"# Type vocabulary: Payday, Bill, Tax, Card, Deal, AssetBuy, Skill, Trade, Other."
+"#   Payday = collect net cashflow. Bill / Tax = fixed charges. Card = a Life Happens / Campus Life / Temptation draw."
+"#   Deal = buy/sell an Opportunity asset. AssetBuy = buy an ownable board asset. Skill = a Skill-Up purchase. Trade = stock buy/sell. Other = anything else (e.g. a term-deposit lock)."
+"# PAYDAY amount is NOT fixed: read the team's current 'Monthly Cash Flow' off their Financial Statement and log THAT as the + Payday row. (It already nets their recurring rent/subs/debt - so never log those recurring expenses as separate rows; only one-off bills, taxes, and card draws get their own row.)"
+"# AssetBuy / Deal / Skill: log the cash row here, AND add the matching row to the Statement Items tab. An Asset/Deal -> Asset row (lifts Passive Income, helps escape). A Skill -> just an Income row (lifts active Income / Cash Flow only)."
+"# BALANCE-GROWTH cards (e.g. 'student-loan balance grows $1000', 'card balance grows $500') are NOT cash - do NOT log them here. Instead just raise that liability's BALANCE on Statement Items; its monthly payment recalculates itself (=balance x rate). Likewise a one-off 'lose $X income this payday' card IS cash - log it here as a negative row."
+"# EXAMPLES: the Round-1 rows above are illustrative - DELETE them before the live game so they don't count in Cash totals."
+"# These guide rows carry no team name in column B, so SUMIF ignores them - leaving them in place is harmless."

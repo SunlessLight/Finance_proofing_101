@@ -1,0 +1,24 @@
+Team,Cash Flow,Total Assets,Liabilities,Net Equity,Passive Income,Monthly Expenses,Passive/Expense Ratio,Escaped Rat Race?
+Team 1,,,,,,,,
+Team 2,,,,,,,,
+Team 3,,,,,,,,
+Team 4,,,,,,,,
+Team 5,,,,,,,,
+Team 6,,,,,,,,
+
+# HOW TO USE - Balance Dashboard (MENTOR LEADERBOARD - read only)
+"# ROLE: this is the mentor's all-6-teams-at-a-glance scoreboard. Players read their OWN Statement tab; mentors watch this to track the race and the win."
+"# It is 100% FORMULA-DRIVEN and READ-ONLY. Each row just mirrors that team's Financial Statement summary box - paste the references once, then it updates itself."
+"# Each cell points straight at the matching Statement tab, e.g. row 2 (Team 1):"
+"#   B2 Cash Flow            = 'Statement - Team 1'!B6"
+"#   C2 Total Assets         = 'Statement - Team 1'!B7"
+"#   D2 Liabilities          = 'Statement - Team 1'!B8"
+"#   E2 Net Equity           = 'Statement - Team 1'!B9"
+"#   F2 Passive Income       = 'Statement - Team 1'!B10"
+"#   G2 Monthly Expenses     = 'Statement - Team 1'!B5"
+"#   H2 Passive/Expense Ratio = =F2/G2   (the tie-break metric - higher is better)"
+"#   I2 Escaped Rat Race?    = 'Statement - Team 1'!B11"
+"# Row 3 points at 'Statement - Team 2', row 4 at Team 3, and so on (change only the tab name; H stays =F3/G3 etc.)."
+"# WIN: the first team whose Escaped Rat Race? (col I) lights up has escaped (Passive Income from assets/deals/stock dividends >= Monthly Expenses)."
+"# NO ESCAPEE AT TIME-OUT: highest Passive/Expense Ratio (col H) wins; if still tied, highest Net Equity (col E)."
+"# Do NOT type into rows 2-7."

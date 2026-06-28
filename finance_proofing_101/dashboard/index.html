@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Market Dashboard — Finance Game</title>
+  <style>
+    /* ===== Outfit, bundled locally so it renders offline (no Wi-Fi needed) ===== */
+    @font-face {
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('./fonts/Outfit-400.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 600;
+      font-display: swap;
+      src: url('./fonts/Outfit-600.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: url('./fonts/Outfit-700.ttf') format('truetype');
+    }
+
+    @font-face {
+      font-family: 'Outfit';
+      font-style: normal;
+      font-weight: 800;
+      font-display: swap;
+      src: url('./fonts/Outfit-800.ttf') format('truetype');
+    }
+
+    :root {
+      /* ALSCO design tokens (dashboard-local copy — shared design_system/ is untouched) */
+      --alsco-maroon: #88113b;
+      --alsco-maroon-dark: #6d0d2f;
+      --alsco-ink: #1f2937;
+      --alsco-white: #ffffff;
+      --alsco-gray-700: #374151;
+      --alsco-gray-400: #9ca3af;
+      --alsco-gray-300: #d1d5db;
+      --alsco-gray-100: #f3f4f6;
+      --win-green: #15803d;
+      --loss-maroon: #88113b;
+      --alert-red: #dc2626;
+      --axis: #d1d5db;
+      --alsco-font-sans: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+      --alsco-radius-card: 1.5rem;
+      --alsco-radius-pill: 9999px;
+      --alsco-radius-sm: 0.5rem;
+      --alsco-shadow: 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);
+      --alsco-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);
+      --alsco-duration: 300ms;
+      --alsco-ease: cubic-bezier(.4, 0, .2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--alsco-white);
+      color: var(--alsco-gray-700);
+      font-family: var(--alsco-font-sans);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .wrap {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 14px 18px;
+      gap: 12px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: .3px;
+      color: var(--alsco-ink);
+    }
+
+    .status {
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: var(--alsco-radius-pill);
+      font-size: 15px;
+    }
+
+    .status.live {
+      background: #dcfce7;
+      color: var(--win-green);
+    }
+
+    .status.paused {
+      background: #fef3c7;
+      color: #b45309;
+    }
+
+    .status.trading {
+      background: #fee2e2;
+      color: var(--alsco-maroon);
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: .5;
+      }
+    }
+
+    .topright {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .round-badge {
+      font-size: 17px;
+      color: var(--alsco-gray-400);
+    }
+
+    .round-badge b {
+      color: var(--alsco-ink);
+      font-size: 22px;
+    }
+
+    .timer {
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--alsco-maroon);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .timer[hidden] {
+      display: none;
+    }
+
+    /* 3x3 grid of per-stock chart cards */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 12px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .card {
+      background: var(--alsco-white);
+      border: 1px solid var(--alsco-gray-300);
+      border-radius: var(--alsco-radius-card);
+      box-shadow: var(--alsco-shadow);
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      transition: box-shadow var(--alsco-duration) var(--alsco-ease), outline-color var(--alsco-duration);
+    }
+
+    .card .name {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--alsco-maroon);
+    }
+
+    .card .tag {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--alsco-radius-pill);
+      background: var(--alsco-gray-100);
+      color: var(--alsco-gray-700);
+    }
+
+    /* colored tag pills (used in the Stock Info modal only) */
+    .tag.tag-yellow { background: #fef9c3; color: #854d0e; }
+    .tag.tag-brown  { background: #ede0d4; color: #92400e; }
+    .tag.tag-green  { background: #dcfce7; color: #15803d; }
+    .tag.tag-blue   { background: #dbeafe; color: #1d4ed8; }
+    .tag.tag-pink   { background: #fce7f3; color: #be185d; }
+
+    .card .pxrow {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin: 2px 0 4px;
+    }
+
+    .card .price {
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--alsco-ink);
+      line-height: 1.05;
+    }
+
+    .card .chg {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .card .yield {
+      margin-left: auto;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--win-green);
+      background: #dcfce7;
+      padding: 1px 8px;
+      border-radius: var(--alsco-radius-pill);
+    }
+
+    .card .yield.none {
+      display: none;
+    }
+
+    .up {
+      color: var(--win-green);
+    }
+
+    .down {
+      color: var(--loss-maroon);
+    }
+
+    .flat {
+      color: var(--alsco-gray-400);
+    }
+
+    .card canvas {
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .card.trade {
+      outline: 2px solid var(--alsco-maroon);
+      box-shadow: var(--alsco-shadow-lg);
+    }
+
+    /* news-driven card blinks (a stock the news says will rise / fall) */
+    .card.blink-up {
+      animation: blinkUp 0.7s ease-in-out 10;
+    }
+
+    .card.blink-down {
+      animation: blinkDown 0.7s ease-in-out 10;
+    }
+
+    @keyframes blinkUp {
+      50% {
+        outline: 3px solid var(--win-green);
+        box-shadow: 0 0 0 4px #dcfce7, var(--alsco-shadow-lg);
+      }
+    }
+
+    @keyframes blinkDown {
+      50% {
+        outline: 3px solid var(--loss-maroon);
+        box-shadow: 0 0 0 4px #fde7ef, var(--alsco-shadow-lg);
+      }
+    }
+
+    .news {
+      background: var(--alsco-white);
+      border: 1px solid var(--alsco-gray-300);
+      border-left: 5px solid var(--alsco-maroon);
+      border-radius: var(--alsco-radius-sm);
+      padding: 18px 24px;
+      transition: border-color 120ms;
+    }
+
+    .news .label {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+      color: var(--alsco-maroon);
+    }
+
+    .news .headline {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--alsco-ink);
+      margin-top: 4px;
+      min-height: 34px;
+    }
+
+    .news .headline .nline {
+      display: block;
+      font-size: 22px;
+      font-weight: 700;
+      margin: 3px 0;
+    }
+
+    /* neutral (grey) upcoming preview line — no direction telegraphed */
+    .news .headline .nline.neutral {
+      color: var(--alsco-gray-700);
+      font-weight: 600;
+    }
+
+    /* red attention flash when a fresh headline breaks */
+    .news.flash {
+      border-color: var(--alert-red);
+      animation: newsflash 0.6s ease-in-out infinite;
+    }
+
+    @keyframes newsflash {
+      50% {
+        border-color: var(--alert-red);
+        box-shadow: 0 0 0 3px #fee2e2;
+      }
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 #fee2e2;
+      }
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    button {
+      font-family: inherit;
+      border-radius: var(--alsco-radius-pill);
+      padding: 9px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--alsco-duration) var(--alsco-ease), color var(--alsco-duration);
+    }
+
+    .btn-outline {
+      background: var(--alsco-white);
+      color: var(--alsco-maroon);
+      border: 1.5px solid var(--alsco-maroon);
+    }
+
+    .btn-outline:hover {
+      background: var(--alsco-maroon);
+      color: var(--alsco-white);
+    }
+
+    .btn-maroon {
+      background: var(--alsco-maroon);
+      color: var(--alsco-white);
+      border: 1.5px solid var(--alsco-maroon);
+    }
+
+    .btn-maroon:hover {
+      background: var(--alsco-maroon-dark);
+      border-color: var(--alsco-maroon-dark);
+    }
+
+    .controls label {
+      font-size: 13px;
+      color: var(--alsco-gray-700);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    select {
+      font-family: inherit;
+      background: var(--alsco-white);
+      color: var(--alsco-gray-700);
+      border: 1.5px solid var(--alsco-gray-300);
+      border-radius: var(--alsco-radius-sm);
+      padding: 8px;
+    }
+
+    /* ===== Stock Info modal ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--alsco-white);
+      z-index: 50;
+      overflow: auto;
+      padding: 28px;
+    }
+
+    .modal-overlay[hidden] {
+      display: none;
+    }
+
+    .modal-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      font-size: 26px;
+      line-height: 1;
+      border-radius: var(--alsco-radius-pill);
+      background: var(--alsco-white);
+      color: var(--alsco-maroon);
+      border: 1.5px solid var(--alsco-maroon);
+    }
+
+    .modal-close:hover {
+      background: var(--alsco-maroon);
+      color: var(--alsco-white);
+    }
+
+    .modal-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--alsco-ink);
+      margin: 4px 0 6px;
+    }
+
+    .modal-blurb {
+      font-size: 16px;
+      color: var(--alsco-gray-700);
+      margin: 0 0 20px;
+      max-width: 900px;
+      line-height: 1.5;
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .info-card {
+      min-height: 150px;
+    }
+
+    .info-card .info-desc {
+      font-size: 14px;
+      color: var(--alsco-gray-700);
+      line-height: 1.45;
+      margin: 8px 0 12px;
+      flex: 1;
+    }
+
+    .info-card .info-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <button id="infoBtn" class="btn-outline">ℹ Stock Info</button>
+      <h1>📈 Live Market</h1>
+      <span id="status" class="status paused">❚❚ PAUSED</span>
+      <div class="topright">
+        <span class="round-badge">Round <b id="roundNum">1</b></span>
+        <span class="timer" id="timer" hidden></span>
+      </div>
+    </header>
+
+    <div class="grid" id="grid"></div>
+
+    <div class="news" id="newsBox">
+      <div class="label" id="newsLabel">📰 Market News</div>
+      <div class="headline" id="headline">Press Play to open the market…</div>
+    </div>
+
+    <div class="controls">
+      <button id="playBtn" class="btn-outline">▶ Play</button>
+      <button id="tickBtn" class="btn-outline">⏭ Next session</button>
+      <button id="roundBtn" class="btn-outline">⏩ Next round</button>
+      <button id="tradeBtn" class="btn-maroon">🔔 Open Trading Window</button>
+      <label>Speed
+        <select id="speed">
+          <option value="6000">Slow (6s)</option>
+          <option value="4000" selected>Normal (4s)</option>
+          <option value="2000">Fast (2s)</option>
+          <option value="1000">Turbo (1s)</option>
+        </select>
+      </label>
+      <button id="resetBtn" class="btn-outline">↺ Reset</button>
+    </div>
+  </div>
+
+  <!-- Stock Info modal: a teaching panel describing each instrument -->
+  <div id="infoModal" class="modal-overlay" hidden>
+    <div class="modal-inner">
+      <button id="infoClose" class="modal-close" aria-label="Close">×</button>
+      <h2 class="modal-title">📈 Finance Proofing 101 - The Stock Market</h2>
+      <p class="modal-blurb">Buying Stocks means you're buying a part of something, a company for example. If the
+        company grows in value, your stock grows too, and you can sell it at a higher price to earn money. <b>Buy Low
+          Sell High.</b> Below are 9 stocks of different kinds such as: <b>index fund</b> that
+        owns
+        the whole market and quietly compounds, steady <b>dividend stocks</b> that pay you to wait, racy <b>growth
+          stocks</b>
+        that swing hard on news, and a <b>meme crypto</b> that runs on pure hype. <b>Read the news</b>, watch the cards
+        blink,
+        and
+        remember — <b>when one sector rises, another often falls</b>.</p>
+      <div class="modal-grid" id="infoGrid"></div>
+    </div>
+  </div>
+
+  <script>
+    /* ===== Embedded market script (mirror of market-script.json — edit both) ===== */
+    const SCRIPT = {
+      rounds: 13, ticksPerRound: 60, tickMs: 4000,
+      instruments: [
+        {
+          id: "INDEX", name: "A&L 500", type: "index", vol: 10, divPerShare: 0,
+          desc: "A basket of the 500 biggest US companies — buying it means you own 'the whole market' in one click.",
+          tags: ["Index Fund", "Diversified", "Slow & Steady"],
+          anchors: [100, 100, 110, 110, 120, 120, 130, 130, 140, 150, 160, 180, 200, 230]
+        },
+        {
+          id: "MEGAMART", name: "99 Megamart", type: "stable", vol: 10, divPerShare: 5,
+          desc: "An everyday retail chain. People shop in good times and bad, so it stays steady and pays a dividend.",
+          tags: ["Stable", "Dividend", "Defensive"],
+          anchors: [100, 110, 110, 90, 100, 110, 120, 120, 130, 120, 100, 110, 120, 130]
+        },
+        {
+          id: "POWERGRID", name: "TenGrid", type: "stable", vol: 10, divPerShare: 5,
+          desc: "The national power utility — boring but essential. It pays you a dividend just for holding it.",
+          tags: ["Stable", "Dividend", "Utility"],
+          anchors: [110, 110, 90, 100, 110, 110, 130, 130, 120, 110, 160, 150, 150, 160]
+        },
+        {
+          id: "SAFEBANK", name: "Safebank", type: "stable", vol: 10, divPerShare: 5,
+          desc: "A big bank. It earns more when interest rates rise and people borrow more — and pays a dividend.",
+          tags: ["Stable", "Dividend", "Bank"],
+          anchors: [140, 150, 150, 160, 160, 130, 120, 120, 130, 150, 150, 160, 130, 140]
+        },
+        {
+          id: "TELECOM", name: "Telecom", type: "stable", vol: 10, divPerShare: 5,
+          desc: "A telco living off monthly phone and data subscriptions — steady cashflow and a dividend.",
+          tags: ["Stable", "Dividend", "Defensive"],
+          anchors: [90, 100, 100, 110, 110, 100, 110, 120, 140, 110, 120, 120, 130, 130]
+        },
+        {
+          id: "NOVATECH", name: "Nivatech", type: "growth", vol: 20, divPerShare: 0,
+          desc: "A chipmaker riding the AI boom. Huge upside when hype is on, but the swings are violent.",
+          tags: ["Growth", "Tech", "High Volatility"],
+          anchors: [130, 150, 190, 200, 220, 220, 160, 120, 120, 170, 170, 190, 240, 260]
+        },
+        {
+          id: "BIOCURE", name: "BioTech", type: "growth", vol: 20, divPerShare: 0,
+          desc: "A biotech. It jumps on trial wins and FDA approvals, and drops just as fast when news disappoints.",
+          tags: ["Growth", "Biotech", "Binary News"],
+          anchors: [100, 90, 100, 100, 80, 90, 80, 80, 90, 100, 100, 150, 140, 150]
+        },
+        {
+          id: "DRIVEX", name: "DriveX", type: "growth", vol: 20, divPerShare: 0,
+          desc: "An electric-vehicle maker driven by hype. Sharp run-ups on new models, sharp falls when demand cools.",
+          tags: ["Growth", "EV", "High Volatility"],
+          anchors: [140, 150, 170, 200, 250, 250, 170, 140, 100, 130, 110, 120, 140, 160]
+        },
+        {
+          id: "MOONCHAIN", name: "Mooncoin", type: "meme", vol: 30, divPerShare: 0,
+          desc: "A meme cryptocurrency that runs on pure Fear Of Missing Out (FOMO). It can pump to the moon — then crash to almost nothing.",
+          tags: ["Meme", "Crypto", "Extreme Risk"],
+          anchors: [40, 60, 110, 180, 240, 290, 100, 60, 40, 50, 40, 30, 30, 20]
+        }
+      ],
+      /* News engine. One object per round (1-based):
+         - upcoming: shown in the Trading Window BEFORE that round — one stock hinted to rise, one to fall.
+         - events:   shown DURING that round at the given tick; the riser fires early, the faller fires later.
+                     up[]/down[] are the cards that blink (green = rising, maroon = falling). flash pulses the news border. */
+      news: [
+        {
+          round: 1,
+          upcoming: {
+            up: { stock: "NOVATECH", text: "Nivatech is about to release a powerful new computer chip." },
+            down: { stock: "BIOCURE", text: "The pandemic is ending, so fewer people need BioTech's vaccine." }
+          },
+          events: [
+            { tick: 10, flash: true, text: "Nivatech unveils a new AI chip — tech investors start piling in.", up: ["NOVATECH"], down: [] },
+            { tick: 38, flash: true, text: "The pandemic fades — BioTech's vaccine demand cools.", up: [], down: ["BIOCURE"] }]
+        },
+        {
+          round: 2,
+          upcoming: {
+            up: { stock: "NOVATECH", text: "Nivatech will soon report how much money it made — many expect a lot." },
+            down: { stock: "POWERGRID", text: "People are losing interest in slow, boring companies like TenGrid." }
+          },
+          events: [
+            { tick: 10, flash: true, text: "Nivatech posts record earnings — the AI rally goes into overdrive.", up: ["NOVATECH"], down: [] },
+            { tick: 38, flash: true, text: "Money flees utilities for tech — TenGrid drifts lower.", up: [], down: ["POWERGRID"] }]
+        },
+        {
+          round: 3,
+          upcoming: {
+            up: { stock: "MOONCHAIN", text: "Everyone online is talking about Mooncoin right now." },
+            down: { stock: "MEGAMART", text: "People are selling shops like 99 Megamart to put money into crypto instead." }
+          },
+          events: [
+            { tick: 10, flash: true, text: "Mooncoin mania: up 5x as FOMO grips the crowd.", up: ["MOONCHAIN"], down: [] },
+            { tick: 38, flash: true, text: "Boring is out — 99 Megamart is sold off to fund crypto bets.", up: [], down: ["MEGAMART"] }]
+        },
+        {
+          round: 4,
+          upcoming: {
+            up: { stock: "DRIVEX", text: "DriveX is about to reveal a brand-new car model." },
+            down: { stock: "BIOCURE", text: "Everyone is chasing exciting stocks, so quiet ones like BioTech are being ignored." }
+          },
+          events: [
+            { tick: 10, flash: true, text: "DriveX unveils its next-gen EV — the stock goes vertical.", up: ["DRIVEX"], down: [] },
+            { tick: 38, flash: true, text: "Risk-on mania: investors abandon BioTech for hotter bets.", up: [], down: ["BIOCURE"] }]
+        },
+        {
+          round: 5,
+          upcoming: {
+            up: { stock: "MOONCHAIN", text: "Mooncoin is close to its highest price ever, and buyers keep coming." },
+            down: { stock: "SAFEBANK", text: "The government is investigating banks that work with crypto, like Safebank." }
+          },
+          events: [
+            { tick: 10, flash: true, text: "Euphoria peaks — Mooncoin blows off to a brand-new all-time high.", up: ["MOONCHAIN"], down: [] },
+            { tick: 38, flash: true, text: "First cracks: a regulatory probe rattles Safebank.", up: [], down: ["SAFEBANK"] }]
+        },
+        {
+          round: 6,
+          upcoming: {
+            up: { stock: "POWERGRID", text: "People are getting scared and looking for safe places to put money, like TenGrid." },
+            down: { stock: "MOONCHAIN", text: "Experts are warning that Mooncoin's price has gone up too far, too fast." }
+          },
+          events: [
+            { tick: 10, flash: true, text: "Flight to safety — money rushes into TenGrid and the A&L 500.", up: ["POWERGRID", "INDEX"], down: [] },
+            { tick: 38, flash: true, text: "CRASH — the crypto bubble bursts; Mooncoin collapses overnight.", up: [], down: ["MOONCHAIN", "NOVATECH", "DRIVEX"] }]
+        },
+        {
+          round: 7,
+          upcoming: {
+            up: { stock: "TELECOM", text: "During the panic, people prefer safe companies that pay them regularly, like Telecom." },
+            down: { stock: "NOVATECH", text: "The market is still shaky, and tech companies like Nivatech are back in the news." }
+          },
+          events: [
+            { tick: 10, flash: true, text: "Investors seek shelter — steady Telecom holds up while others fall.", up: ["TELECOM"], down: [] },
+            { tick: 38, flash: true, text: "Contagion hits tech — Nivatech tumbles in the second leg down.", up: [], down: ["NOVATECH", "DRIVEX"] }]
+        },
+        {
+          round: 8,
+          upcoming: {
+            up: { stock: "TELECOM", text: "Telecom is cheap now but still pays $5 to everyone who holds it." },
+            down: { stock: "DRIVEX", text: "Fewer people are buying electric cars from DriveX." }
+          },
+          events: [
+            { tick: 10, flash: true, text: "Dividends shine: bargain hunters scoop up Telecom for its steady payout.", up: ["TELECOM", "MEGAMART", "SAFEBANK"], down: [] },
+            { tick: 38, flash: true, text: "Capitulation: EV demand collapses and DriveX slumps to new lows.", up: [], down: ["DRIVEX", "MOONCHAIN"] }]
+        },
+        {
+          round: 9,
+          upcoming: {
+            up: { stock: "NOVATECH", text: "Now that prices are low, people are starting to buy cheap tech like Nivatech again." },
+            down: { stock: "TELECOM", text: "People feel brave again and are moving money out of safe companies like Telecom." }
+          },
+          events: [
+            { tick: 10, flash: true, text: "Recovery begins — dip-buyers pile into Nivatech and the rebound is on.", up: ["NOVATECH", "INDEX", "DRIVEX"], down: [] },
+            { tick: 38, flash: true, text: "Risk-on again: defensive Telecom is sold to chase the rally.", up: [], down: ["TELECOM"] }]
+        },
+        {
+          round: 10,
+          upcoming: {
+            up: { stock: "POWERGRID", text: "Electricity and fuel prices are going up fast. TenGrid sells electricity." },
+            down: { stock: "MEGAMART", text: "Everything is getting more expensive to run, including shops like 99 Megamart." }
+          },
+          events: [
+            { tick: 10, flash: true, text: "Energy crunch: power prices spike and TenGrid rallies hard.", up: ["POWERGRID"], down: [] },
+            { tick: 38, flash: true, text: "Cost inflation bites — 99 Megamart and DriveX slip on higher input costs.", up: [], down: ["MEGAMART", "DRIVEX"] }]
+        },
+        {
+          round: 11,
+          upcoming: {
+            up: { stock: "BIOCURE", text: "BioTech is waiting to hear if the government approves its new medicine." },
+            down: { stock: "MOONCHAIN", text: "Hardly anyone is buying Mooncoin anymore." }
+          },
+          events: [
+            { tick: 10, flash: true, text: "Breakthrough: BioTech wins FDA approval and the stock jumps.", up: ["BIOCURE"], down: [] },
+            { tick: 38, flash: true, text: "No bounce for crypto — Mooncoin grinds lower, near worthless.", up: [], down: ["MOONCHAIN"] }]
+        },
+        {
+          round: 12,
+          upcoming: {
+            up: { stock: "NOVATECH", text: "A new wave of AI excitement is building around Nivatech." },
+            down: { stock: "SAFEBANK", text: "Interest rates are expected to be cut soon. Banks like Safebank earn money from interest." }
+          },
+          events: [
+            { tick: 10, flash: true, text: "AI boom, round two — Nivatech breaks out to fresh highs.", up: ["NOVATECH", "DRIVEX"], down: [] },
+            { tick: 38, flash: true, text: "Rate cuts loom — thinner margins drag Safebank down.", up: [], down: ["SAFEBANK"] }]
+        },
+        {
+          round: 13,
+          upcoming: {
+            up: { stock: "INDEX", text: "The whole market has been climbing steadily, and the A&L 500 owns a bit of everything." },
+            down: { stock: "MOONCHAIN", text: "People have basically forgotten about Mooncoin." }
+          },
+          events: [
+            { tick: 10, flash: true, text: "The boring A&L 500 leads a broad melt-up to record highs.", up: ["INDEX", "NOVATECH"], down: [] },
+            { tick: 38, flash: true, text: "Final tally: the index more than doubled while Mooncoin went to near zero.", up: [], down: ["MOONCHAIN"] }]
+        }
+      ]
+    };
+
+    /* ===== Deterministic price model: interpolate anchors + seeded jitter, snap to $10 ===== */
+    const TPR = SCRIPT.ticksPerRound;
+    const VIEW = 30; // rolling window: only the most recent VIEW sessions are charted, so moves look big
+    function seeded(a, b) { const x = Math.sin(a * 127.1 + b * 311.7) * 43758.5453; return x - Math.floor(x); } // 0..1
+    function snap10(v) { return Math.max(10, Math.round(v / 10) * 10); }
+
+    // price for instrument index `k`, round `r` (0-based), tick `t` (0-based)
+    function priceAt(k, r, t) {
+      const inst = SCRIPT.instruments[k];
+      const open = inst.anchors[r], close = inst.anchors[r + 1];
+      if (t === 0) return open;                 // round opens exactly at anchor
+      if (t === TPR - 1) return close;          // round closes exactly at anchor (official trade price)
+      const base = open + (close - open) * (t / (TPR - 1));
+      const jitter = (seeded(k + 1, r * TPR + t) - 0.5) * 2 * inst.vol; // ±vol
+      return snap10(base + jitter);
+    }
+
+    /* ===== State ===== */
+    const TRADE_SECONDS = 180;        // 3-minute Trading Window countdown
+    let state = { r: 0, t: 0, playing: false, trading: false, timer: null, tradeTimer: null, tradeRemaining: 0, tradePaused: false };
+    const history = {};               // id -> [prices]
+    let lastNewsKey = "";
+
+    /* ===== Build per-stock chart cards ===== */
+    const gridEl = document.getElementById("grid");
+    SCRIPT.instruments.forEach((inst) => {
+      const c = document.createElement("div");
+      c.className = "card"; c.id = "card-" + inst.id;
+      c.innerHTML = `<div class="name"><span>${inst.name}</span><span class="tag">${inst.type}</span></div>
+                 <div class="pxrow"><span class="price" id="px-${inst.id}">$${inst.anchors[0]}</span>
+                 <span class="chg flat" id="chg-${inst.id}">—</span>
+                 <span class="yield ${inst.divPerShare ? "" : "none"}" id="yld-${inst.id}" title="Dividend yield = $${inst.divPerShare}/share ÷ price"></span></div>
+                 <canvas id="cv-${inst.id}"></canvas>`;
+      gridEl.appendChild(c);
+      history[inst.id] = [];
+    });
+
+    /* ===== Build the Stock Info modal cards ===== */
+    // map a tag's text (case-insensitive) to a color class; unknown tags stay grey
+    const TAG_COLOR = {
+      dividend: "tag-yellow", stable: "tag-brown", growth: "tag-green",
+      tech: "tag-blue", biotech: "tag-pink"
+    };
+    function tagPill(text) {
+      const cls = TAG_COLOR[String(text).toLowerCase()] || "";
+      return `<span class="tag ${cls}">${text}</span>`;
+    }
+    function buildInfoModal() {
+      document.getElementById("infoGrid").innerHTML = SCRIPT.instruments.map(inst => `
+    <div class="card info-card">
+      <div class="name"><span>${inst.name}</span>${tagPill(inst.type)}</div>
+      <p class="info-desc">${inst.desc}</p>
+      <div class="info-tags">${(inst.tags || []).map(tagPill).join("")}</div>
+    </div>`).join("");
+    }
+    buildInfoModal();
+
+    /* ===== Render ===== */
+    function render() {
+      document.getElementById("roundNum").textContent = state.r + 1;
+
+      SCRIPT.instruments.forEach((inst, k) => {
+        const px = priceAt(k, state.r, state.t);
+        const open = inst.anchors[state.r];        // change is measured against the round's opening price
+        const diff = px - open;
+        const pct = open ? (diff / open) * 100 : 0;
+        document.getElementById("px-" + inst.id).textContent = "$" + px;
+        const chg = document.getElementById("chg-" + inst.id);
+        if (diff > 0) { chg.className = "chg up"; chg.textContent = "▲ +" + diff + " (+" + pct.toFixed(1) + "%)"; }
+        else if (diff < 0) { chg.className = "chg down"; chg.textContent = "▼ −" + Math.abs(diff) + " (−" + Math.abs(pct).toFixed(1) + "%)"; }
+        else { chg.className = "chg flat"; chg.textContent = "— flat"; }
+        document.getElementById("card-" + inst.id).classList.toggle("trade", state.trading);
+
+        // live dividend yield = fixed $/share ÷ current price (floats as price moves; spikes when price falls)
+        if (inst.divPerShare) {
+          document.getElementById("yld-" + inst.id).textContent =
+            "Yield " + ((inst.divPerShare / px) * 100).toFixed(1) + "%";
+        }
+
+        history[inst.id].push(px);
+        drawSparkline(document.getElementById("cv-" + inst.id), history[inst.id]);
+      });
+
+      // news: during the Trading Window show the 'upcoming' preview; during play fire timed events
+      if (state.trading) {
+        showUpcoming();
+      } else {
+        const rn = SCRIPT.news.find(n => n.round === state.r + 1);
+        if (rn && rn.events) {
+          rn.events.forEach((ev, i) => {
+            if (ev.tick === state.t) {
+              const key = (state.r + 1) + "-e" + i;
+              if (key !== lastNewsKey) {
+                lastNewsKey = key;
+                showHeadline(ev.text, ev.flash);
+                (ev.up || []).forEach(id => blinkCard(id, "up"));
+                (ev.down || []).forEach(id => blinkCard(id, "down"));
+              }
+            }
+          });
+        }
+      }
+      updateStatus();
+    }
+
+    /* ===== News panel helpers ===== */
+    const newsBox = document.getElementById("newsBox");
+    const newsLabel = document.getElementById("newsLabel");
+    const headlineEl = document.getElementById("headline");
+    let flashTimer = null;
+
+    function showHeadline(text, flash) {
+      newsLabel.textContent = "📰 Market News";
+      headlineEl.textContent = text;
+      if (flash) {
+        newsBox.classList.remove("flash"); void newsBox.offsetWidth; newsBox.classList.add("flash");
+        clearTimeout(flashTimer);
+        flashTimer = setTimeout(() => newsBox.classList.remove("flash"), 7000);
+      }
+    }
+
+    // during the Trading Window, preview the next round's two headlines — neutral & non-directional,
+    // shuffled so players can't tell which one is the riser just from its position.
+    function showUpcoming() {
+      const next = SCRIPT.news.find(n => n.round === state.r + 2);
+      newsLabel.textContent = "🔮 Upcoming headlines — what's brewing next round";
+      if (next && next.upcoming) {
+        headlineEl.textContent = "";
+        const lines = [next.upcoming.up.text, next.upcoming.down.text];
+        if (Math.random() < 0.5) lines.reverse();
+        lines.forEach(text => {
+          const el = document.createElement("span");
+          el.className = "nline neutral"; el.textContent = "• " + text;
+          headlineEl.append(el);
+        });
+      } else {
+        headlineEl.textContent = "🏁 Final trading window — last chance to position before the game ends.";
+      }
+    }
+
+    function blinkCard(id, dir) {
+      const el = document.getElementById("card-" + id);
+      if (!el) return;
+      const cls = dir === "up" ? "blink-up" : "blink-down";
+      el.classList.remove("blink-up", "blink-down"); void el.offsetWidth; el.classList.add(cls);
+      clearTimeout(el._blinkTimer);
+      el._blinkTimer = setTimeout(() => el.classList.remove(cls), 7500);
+    }
+
+    function updateStatus() {
+      const s = document.getElementById("status");
+      if (state.trading) { s.className = "status trading"; s.textContent = "🔔 TRADING WINDOW — trade now!"; }
+      else if (state.playing) { s.className = "status live"; s.textContent = "● LIVE"; }
+      else { s.className = "status paused"; s.textContent = "❚❚ PAUSED"; }
+    }
+
+    /* ===== Per-card sparkline: grey axis + per-segment green(up)/maroon(down) line, last VIEW sessions ===== */
+    function drawSparkline(canvas, full) {
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      if (!w || !h) return;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+      const padL = 6, padR = 6, padT = 8, padB = 6;
+
+      // grey axes (left + bottom)
+      ctx.strokeStyle = "#d1d5db"; ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padL, padT); ctx.lineTo(padL, h - padB); ctx.lineTo(w - padR, h - padB);
+      ctx.stroke();
+
+      const arr = full.slice(-VIEW);              // rolling window — only the most recent sessions
+      if (arr.length < 2) return;
+      const max = Math.max(...arr), min = Math.min(...arr);
+      const span = (max - min) || 1;              // auto-zoom Y so moves fill the box
+      const xOf = i => padL + (w - padL - padR) * (i / (arr.length - 1));
+      const yOf = v => (h - padB) - (h - padT - padB) * ((v - min) / span);
+
+      ctx.lineWidth = 2.5; ctx.lineJoin = "round"; ctx.lineCap = "round";
+      for (let i = 1; i < arr.length; i++) {
+        ctx.beginPath();
+        ctx.strokeStyle = arr[i] > arr[i - 1] ? "#15803d"      // green up
+          : arr[i] < arr[i - 1] ? "#88113b"      // maroon down
+            : "#9ca3af";                            // grey flat
+        ctx.moveTo(xOf(i - 1), yOf(arr[i - 1]));
+        ctx.lineTo(xOf(i), yOf(arr[i]));
+        ctx.stroke();
+      }
+    }
+    function redrawAll() {
+      SCRIPT.instruments.forEach(inst => drawSparkline(document.getElementById("cv-" + inst.id), history[inst.id]));
+    }
+
+    /* ===== Trading-Window countdown ===== */
+    const timerEl = document.getElementById("timer");
+    function fmt(sec) { const m = Math.floor(sec / 60), s = sec % 60; return m + ":" + String(s).padStart(2, "0"); }
+    function renderTimer() { timerEl.textContent = "⏱ " + fmt(Math.max(0, state.tradeRemaining)); }
+    function startTradeTimer() {
+      stopTradeTimer();
+      state.tradeRemaining = TRADE_SECONDS; state.tradePaused = false;
+      timerEl.hidden = false; renderTimer();
+      state.tradeTimer = setInterval(() => {
+        if (state.tradePaused) return;
+        state.tradeRemaining--;
+        renderTimer();
+        if (state.tradeRemaining <= 0) { stopTradeTimer(); nextRound(); }  // time's up -> advance, stay paused
+      }, 1000);
+    }
+    function stopTradeTimer() {
+      if (state.tradeTimer) { clearInterval(state.tradeTimer); state.tradeTimer = null; }
+      timerEl.hidden = true; state.tradePaused = false;
+    }
+
+    /* ===== Advance logic ===== */
+    function step() {
+      if (state.t < TPR - 1) { state.t++; }
+      else { openTrading(); return; }   // end of round -> open trading window, pause
+      render();
+    }
+    function openTrading() {
+      stopTimer(); state.playing = false; state.trading = true; state.t = TPR - 1;
+      render();                          // render() shows the 'upcoming' preview while trading
+      startTradeTimer();                 // begin the 3-minute countdown
+      document.getElementById("playBtn").textContent = "❚❚ Pause";  // countdown is running
+    }
+    function nextRound() {
+      stopTradeTimer();
+      if (state.r < SCRIPT.rounds - 1) {
+        state.r++; state.t = 0; state.trading = false; state.playing = false;
+        document.getElementById("playBtn").textContent = "▶ Play";
+        stopTimer();
+        render();                        // next round begins PAUSED — operator presses Play
+      } else {
+        stopTimer(); state.playing = false; state.trading = false;
+        newsLabel.textContent = "🏁 Game over";
+        headlineEl.textContent =
+          "Tally net equity. Notice: the A&L 500 more than doubled while Mooncoin went to near zero.";
+        updateStatus();
+      }
+    }
+
+    /* ===== Timer ===== */
+    function startTimer() {
+      stopTimer();
+      const ms = parseInt(document.getElementById("speed").value, 10);
+      state.timer = setInterval(step, ms);
+    }
+    function stopTimer() { if (state.timer) { clearInterval(state.timer); state.timer = null; } }
+
+    /* ===== Controls ===== */
+    document.getElementById("playBtn").onclick = function () {
+      if (state.trading) {                        // during trading, Play/Pause controls the countdown
+        if (!state.tradeTimer) return;
+        state.tradePaused = !state.tradePaused;
+        this.textContent = state.tradePaused ? "▶ Resume" : "❚❚ Pause";
+        return;
+      }
+      state.playing = !state.playing;
+      this.textContent = state.playing ? "❚❚ Pause" : "▶ Play";
+      if (state.playing) startTimer(); else stopTimer();
+      updateStatus();
+    };
+    document.getElementById("tickBtn").onclick = () => { if (!state.trading) step(); };
+    document.getElementById("roundBtn").onclick = () => { nextRound(); };
+    document.getElementById("tradeBtn").onclick = () => openTrading();
+    document.getElementById("speed").onchange = () => { if (state.playing) startTimer(); };
+    document.getElementById("resetBtn").onclick = () => {
+      stopTimer(); stopTradeTimer();
+      state = { r: 0, t: 0, playing: false, trading: false, timer: null, tradeTimer: null, tradeRemaining: 0, tradePaused: false };
+      SCRIPT.instruments.forEach(inst => {
+        history[inst.id] = [];
+        const card = document.getElementById("card-" + inst.id);
+        card.classList.remove("blink-up", "blink-down");
+      });
+      newsBox.classList.remove("flash");
+      lastNewsKey = "";
+      document.getElementById("playBtn").textContent = "▶ Play";
+      newsLabel.textContent = "📰 Market News";
+      headlineEl.textContent = "Press Play to open the market…";
+      render();
+    };
+
+    /* ===== Stock Info modal open/close ===== */
+    const infoModal = document.getElementById("infoModal");
+    document.getElementById("infoBtn").onclick = () => { infoModal.hidden = false; };
+    document.getElementById("infoClose").onclick = () => { infoModal.hidden = true; };
+    infoModal.addEventListener("click", e => { if (e.target === infoModal) infoModal.hidden = true; });
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && !infoModal.hidden) infoModal.hidden = true; });
+
+    window.addEventListener("resize", redrawAll);
+    render();
+  </script>
+</body>
+
+</html>

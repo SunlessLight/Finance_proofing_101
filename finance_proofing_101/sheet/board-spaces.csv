@@ -1,0 +1,52 @@
+#,Space,Type,Effect
+1,"START — ""New Semester""",Corner/Payday,Pass or land → collect net cash flow
+2,Life Happens,Chance,Draw from your profile sub-deck
+3,Online Shop,Ownable Asset,Buy $1000 → +$300/payday (landing rent if owned: $150)
+4,Temptation,Doodad,Pay per card ($50–$300)
+5,Opportunity,Deal,Draw Small/Big Deal
+6,Campus Laundromat,Ownable Asset,Buy $3500 → +$1050/payday (landing rent if owned: $500)
+7,Online Course,Skill Up,Pay $500 → +$150/payday permanent
+8,Campus Life,Community Chest,Draw Campus Life card
+9,Market News,News,Draw a buyer-offer card (deal resale)
+10,Vending Machine,Corner/Ownable Asset,Buy $1500 → +$450/payday (landing rent if owned: $200)
+11,Opportunity,Deal,Draw Small/Big Deal
+12,Life Happens,Chance,Profile sub-deck
+13,Extra Payday,Payday,Collect net cash flow
+14,Income Tax,Tax,Pay $200
+15,Dorm Sublet,Ownable Asset,Buy $2000 → +$600/payday (landing rent if owned: $300)
+16,Opportunity,Deal,Draw Small/Big Deal
+17,Professional Certification,Skill Up,Pay $1000 → +$300/payday permanent
+18,Extra Payday,Payday,Collect net cash flow
+19,Opportunity,Corner/Deal,Draw Small/Big Deal
+20,Campus Life,Community Chest,Draw card
+21,Parking Spot,Ownable Asset,Buy $2500 → +$750/payday (landing rent if owned: $350)
+22,Life Happens,Chance,Profile sub-deck
+23,Phone Bill,Fixed Bill,Pay $100
+24,Coding Bootcamp,Skill Up,Pay $1500 → +$450/payday permanent
+25,Opportunity,Deal,Draw Small/Big Deal
+26,Market News,News,Draw a buyer-offer card (deal resale)
+27,Extra Payday,Payday,Collect net cash flow
+28,Food Stall,Corner/Ownable Asset,Buy $3000 → +$900/payday (landing rent if owned: $450)
+29,Life Happens,Chance,Profile sub-deck
+30,Temptation,Doodad,Pay per card
+31,E-bike Rental Fleet,Ownable Asset,Buy $4000 → +$1200/payday (landing rent if owned: $600)
+32,Opportunity,Deal,Draw Small/Big Deal
+33,Marketing Course,Skill Up,Pay $2000 → +$600/payday permanent
+34,Campus Life,Community Chest,Draw card
+35,Rent Top-up,Fixed Bill,Pay $300
+36,Market News,News,Draw a buyer-offer card (deal resale)
+,,,
+TYPE ALLOCATION TALLY,,,
+Type,Count,What happens,
+START / Payday (corner),1,Pass or land → collect net cash flow,
+Ownable Asset,7,Buy on landing; pays passive income every payday; charges ½-income landing rent if owned,
+Skill Up / Invest in Yourself,4,Pay → permanent income bump every payday,
+Opportunity / Deal,6,Draw a Small/Big Deal card (illiquid asset → passive income),
+Life Happens (Chance),4,Draw from your profile's sub-deck (2 out / 2 in / 1 skill-up),
+Campus Life (Community Chest),3,Draw a shared social event card (gain or loss),
+Temptation (Doodad),2,Discretionary spend ($50–$300 per card),
+Fixed Bill,2,Pay a recurring bill (phone / rent top-up),
+Market News,3,Draw a buyer-offer card — sell a matching Opportunity at a premium,
+Extra Payday,3,Collect net cash flow mid-lap,
+Tax,1,Income Tax ($200),
+TOTAL,36,4 corners (1/10/19/28) + 4 sides × 8,
