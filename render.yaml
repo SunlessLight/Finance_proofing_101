@@ -1,0 +1,13 @@
+# Render Blueprint — deploys the dashboard as a free Static Site.
+# In Render: New -> Blueprint -> connect this repo, and Render reads this file.
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: finance-proofing-101
+    runtime: static
+    branch: master
+    # No build step: the app is a self-contained static HTML page.
+    buildCommand: ""
+    # The folder (relative to repo root) that holds index.html and fonts/.
+    staticPublishPath: finance_proofing_101/dashboard
+    pullRequestPreviewsEnabled: false
